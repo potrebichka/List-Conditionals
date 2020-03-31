@@ -7,25 +7,34 @@ class App extends Component {
   constructor(props)
   {
     super(props);
-    this.state = {length: 0, text: ""}
+    this.state = {length: 0, text: "", textArray: []}
   }
 
   changeTextHandler = (event) => {
-    this.setState({length: event.target.value.length, text: event.target.value});
+    const value = event.target.value;
+    let textArray = this.state.textArray.slice();
+    textArray.push(value[value.length-1])
+    this.setState({length: value.length, text: value, textArray: textArray});
+    console.log(this.state);
+  }
+
+  charComponentClickHandler = (letterId) => {
+    let textArray = this.state.textArray.slice();
+    textArray.splice(letterId, 1)
+    this.setState({textArray: textArray});
   }
 
   render() {
-    const textArray = this.state.text.slice().split("");
     return (
       <div className="App">
         <h1>List conditionals</h1>
         <div>
-          <label for="text">Enter a text:</label>
+          <label>Enter a text:</label>
           <input type="text" id="text" placeholder="Text" onChange={this.changeTextHandler}/>
           <p>Length of text: {this.state.length}</p>
           <ValidationComponent textLength={this.state.length} />
-          {textArray.map((letter, idx) => {
-            return <CharComponent letter={letter} key={idx}/>  
+          {this.state.textArray.map((letter, idx) => {
+            return <CharComponent letter={letter} key={idx} clicked={() => this.charComponentClickHandler(idx)}/>  
           })}
         </div>
         <ol>
@@ -33,7 +42,7 @@ class App extends Component {
           <li>*Create a new component (=> ValidationComponent) which receives the text length as a prop</li>
           <li>*Inside the ValidationComponent, either output "Text too short" or "Text long enough" depending on the text length (e.g. take 5 as a minimum length)</li>
           <li>*Create another component (=> CharComponent) and style it as an inline box (=> display: inline-block, padding: 16px, text-align: center, margin: 16px, border: 1px solid black).</li>
-          <li>Render a list of CharComponents where each CharComponent receives a different letter of the entered text (in the initial input field) as a prop.</li>
+          <li>*Render a list of CharComponents where each CharComponent receives a different letter of the entered text (in the initial input field) as a prop.</li>
           <li>When you click a CharComponent, it should be removed from the entered text.</li>
         </ol>
         <p>Hint: Keep in mind that JavaScript strings are basically arrays!</p>
